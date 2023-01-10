@@ -1,0 +1,10 @@
+```mermaid
+sequenceDiagram
+	Note over browser: in the form submit javascript adds note to the list of notes<br/> and executes request to server
+    browser->>server: HTTPS POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa<br/> with JSON data (content and date)
+
+    Note right of browser: the post request is a XHR and Content-type: application/json<br />
+
+    server-->>browser: HTTP Response 201 resource created <br/>bringing a body in JSON with a message
+    Note over browser: browser executes the javascript request handler from Ajax Request<br/> and prints response to the browser console
+```
