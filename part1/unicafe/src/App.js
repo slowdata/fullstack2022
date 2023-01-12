@@ -1,8 +1,20 @@
 import { useState } from 'react'
 
+const StatisticLine = ({ text, value }) => (
+  <tr>
+    <td >{text}</td>
+    <td >{value}</td>
 
-const Statistic = ({stat, count}) => <p >{stat} {count}</p>
+  </tr>
+)
 
+const Statistics = ({ stat, count }) => (
+  <StatisticLine text={stat} value={count} />
+)
+
+const Button = ({ children, handleClick }) => (
+  <button onClick={() => handleClick()}>{children}</button>
+)
 
 const App = () => {
   // save clicks of each button to its own state
@@ -16,21 +28,40 @@ const App = () => {
 
 
   return (
-    <div style={{ minHeight: '100vh', display: 'grid', justifyContent: 'center', alignContent: 'center'  }}>
+    <div style={{
+      minHeight: '100vh', display: 'grid',
+      placeItems: 'center', alignContent: 'center'
+    }}>
       <div>
         <h1>give feedback</h1>
         <div style={{ display: 'flex', gap: 2 }}>
-          <button onClick={() => hangleGoodClick()}>good</button>
-          <button onClick={() => hangleNeutralClick()}>neutral</button>
-          <button onClick={() => hangleBadClick()}>bad</button>
+          <Button handleClick={() => hangleGoodClick()}>good</Button>
+          <Button handleClick={() => hangleNeutralClick()}>neutral</Button>
+          <Button handleClick={() => hangleBadClick()}>bad</Button>
         </div>
-        <h1>statistics</h1>
-        <Statistic stat="good" count={good} />
-        <Statistic stat="neutral" count={neutral} />
-        <Statistic stat="bad" count={bad} />
-        <Statistic stat="all" count={good+neutral+bad} />
-        <Statistic stat="average" count={(good - bad)/(good+neutral+bad)} />
-        <Statistic stat="positive" count={`${good/(good+neutral+bad)*100} %`} />
+        <div>
+          <h1>statistics</h1>
+          {(good || neutral || bad) ? (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <table style={{ tableLayout: 'fixed' }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: 'left' }}>Statistic</th>
+                    <th style={{ textAlign: 'left' }}>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <Statistics stat="good" count={good} />
+                  <Statistics stat="neutral" count={neutral} />
+                  <Statistics stat="bad" count={bad} />
+                  <Statistics stat="all" count={good + neutral + bad} />
+                  <Statistics stat="average" count={!(good - bad) ? 0 : (good - bad) / (good + neutral + bad)} />
+                  <Statistics stat="positive" count={!good ? '0 %' : `${good / (good + neutral + bad) * 100} %`} />
+                </tbody>
+              </table>
+            </div>) : 'No feedback given'}
+
+        </div>
       </div>
     </div>
   )
