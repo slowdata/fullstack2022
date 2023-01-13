@@ -42,10 +42,14 @@ const App = () => {
         <h1>Anecdote with most votes</h1>
         {
           Object.keys(points).length > 0 ?
-          <p>{anecdotes[Object.keys(points).reduce((acc, next) => points[acc] > points[next] ? acc : next)]}
-        </p>
-          :
-          ''
+            <p>{anecdotes[
+              Object
+                .keys(points)
+                .reduce((acc, next) => points[acc] > points[next] ? acc : next)
+            ]}
+            </p>
+            :
+            ''
         }
       </div>
     </div>
