@@ -16,9 +16,10 @@ const PersonForm = ({ addPerson }) => {
         e.preventDefault();
 
         if (newPerson.name === '') alert('Please add a name')
-        addPerson(newPerson)
-
-        setNewPerson({ name: '', number: '' })
+        else {
+            addPerson(newPerson)
+            setNewPerson({ name: '', number: '' })
+        }
 
     }
 
