@@ -1,7 +1,7 @@
-const Persons = ({ persons }) => (
+const People = ({ people }) => (
     <ul>
         {
-            persons
+            people
                 .map(person =>
                     <li key={person.name}>{person.name} {person.number}</li>
                 )
@@ -9,4 +9,4 @@ const Persons = ({ persons }) => (
     </ul>
 )
 
-export default Persons
+export default People

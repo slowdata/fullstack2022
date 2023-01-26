@@ -1,49 +1,61 @@
 import { useState, useEffect } from "react";
 
-import axios from "axios";
+import peopleService from './services/people.js'
 
 import Filter from "./components/Filter";
-import PersonForm from "./components/PersonForm";
-import Persons from "./components/Persons";
+import PeopleForm from "./components/PersonForm";
+import People from "./components/People";
 
 const App = () => {
-  const [persons, setPersons] = useState([])
-  const [filteredPersons, setFilteredPersons] = useState([])
+  const [people, setPeople] = useState([])
+  const [filteredPeople, setFilteredPeople] = useState([])
 
   useEffect(() => {
-    axios.get('http://dev.local:3001/persons')
-      .then(res => {
-        setPersons(res.data)
-        setFilteredPersons(res.data)
-      })
+
+    async function getAsyncPeople() {
+      const people = await peopleService.getAll()
+      if (people.error)
+        console.log(people.error.message);
+      else {
+        setPeople(people)
+        setFilteredPeople(people)
+
+      }
+    }
+    getAsyncPeople()
   }, [])
 
 
-  function addPerson(p) {
-    const existingName = persons
+  async function addPerson(p) {
+    const existingName = people
       .find(person => person.name === p.name)
 
     if (existingName !== undefined && existingName.name)
       alert(`${p.name} is already added to phonebook`)
     else {
       const newPersonAdd = {
-        id: persons.length + 1,
+        id: people.length + 1,
         name: p.name,
         number: p.number
       }
-      setPersons([newPersonAdd, ...persons])
-      setFilteredPersons([newPersonAdd, ...filteredPersons])
+      const person = await peopleService.create(newPersonAdd)
+      if (person.error) {
+        console.log(person.error.message)
+      } else {
+        setPeople([person, ...people])
+        setFilteredPeople([person, ...filteredPeople])
+      }
+
     }
   }
 
   function handleFilter(search) {
-    const filteredTmpPersons = persons
+    const filteredTmpPeople = people
       .filter(p => p.name.toUpperCase().includes(search.toUpperCase()))
-    console.log(filteredTmpPersons);
     if (search.length === 0)
-      setFilteredPersons(persons)
+      setFilteredPeople(people)
     else
-      setFilteredPersons(filteredTmpPersons)
+      setFilteredPeople(filteredTmpPeople)
   }
 
   return (
@@ -52,10 +64,10 @@ const App = () => {
       <Filter handleFilter={handleFilter} />
 
       <h2>Add a new</h2>
-      <PersonForm addPerson={addPerson} />
+      <PeopleForm addPerson={addPerson} />
 
       <h2>Numbers</h2>
-      <Persons persons={filteredPersons} />
+      <People people={filteredPeople} />
     </div>
   );
 }
