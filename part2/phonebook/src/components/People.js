@@ -1,12 +1,24 @@
-const People = ({ people }) => (
-    <ul>
-        {
-            people
-                .map(person =>
-                    <li key={person.name}>{person.name} {person.number}</li>
+const People = ({ people }) => {
+    function handleDelete(id) {
+        console.log(id);
+    }
+
+    return (
+        <ul>
+            {
+                people.map(person =>
+                (<div key={person.name} style={{ 'display': 'flex', 'alignItems': 'center' }}>
+                    <li >{person.name} {person.number}</li>
+                    <button
+                        style={{ 'backgroundColor': 'lightblue', 'marginLeft': 4 }}
+                        onClick={() => handleDelete(person.id)}
+                    >
+                        delete</button>
+                </div>)
                 )
-        }
-    </ul>
-)
+            }
+        </ul>
+    )
+}
 
 export default People
