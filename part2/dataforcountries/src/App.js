@@ -32,7 +32,6 @@ function App() {
       setShow({})
     }
     setResult(r)
-
   }
 
   function handleShow(country) {
