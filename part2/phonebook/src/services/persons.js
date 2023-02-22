@@ -29,11 +29,22 @@ const update = async (id, person) => {
     } catch (error) {
         return error
     }
-
 }
+
+const remove = async (id) => {
+    try {
+        const res = await axios.delete(`${baseUrl}/${id}`)
+        if (res.status !== 200) throw new Error('This contact is already deleted.')
+        return
+    } catch (error) {
+        return { message: error.message }
+    }
+}
+
 
 export default {
     getAll,
     create,
-    update
+    update,
+    remove
 }

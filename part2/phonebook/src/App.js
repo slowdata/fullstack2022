@@ -1,61 +1,72 @@
 import { useState, useEffect } from "react";
 
-import peopleService from './services/people.js'
+import personsService from './services/persons.js'
 
 import Filter from "./components/Filter";
-import PeopleForm from "./components/PersonForm";
-import People from "./components/People";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
 
 const App = () => {
-  const [people, setPeople] = useState([])
-  const [filteredPeople, setFilteredPeople] = useState([])
+  const [persons, setPersons] = useState([])
+  const [filteredPersons, setFilteredPersons] = useState([])
 
   useEffect(() => {
-
-    async function getAsyncPeople() {
-      const people = await peopleService.getAll()
-      if (people.error)
-        console.log(people.error.message);
+    async function getAsyncPersons() {
+      const persons = await personsService.getAll()
+      if (persons.error)
+        console.log(persons.error.message);
       else {
-        setPeople(people)
-        setFilteredPeople(people)
+        setPersons(persons)
+        setFilteredPersons(persons)
 
       }
     }
-    getAsyncPeople()
+    getAsyncPersons()
   }, [])
 
 
   async function addPerson(p) {
-    const existingName = people
+    const existingName = persons
       .find(person => person.name === p.name)
 
     if (existingName !== undefined && existingName.name)
       alert(`${p.name} is already added to phonebook`)
     else {
       const newPersonAdd = {
-        id: people.length + 1,
+        id: persons.length + 1,
         name: p.name,
         number: p.number
       }
-      const person = await peopleService.create(newPersonAdd)
+      const person = await personsService.create(newPersonAdd)
       if (person.error) {
         console.log(person.error.message)
       } else {
-        setPeople([person, ...people])
-        setFilteredPeople([person, ...filteredPeople])
+        setPersons([person, ...persons])
+        setFilteredPersons([person, ...filteredPersons])
       }
-
+    }
+  }
+  async function handleDeletePerson(person) {
+    try {
+      const res = await personsService.remove(person.id)
+      if (res) {
+        alert(res.message)
+      } else {
+        setFilteredPersons(filteredPersons.filter(p => p.id !== person.id))
+        setPersons(persons.filter(p => p.id !== person.id))
+      }
+    } catch (error) {
+      alert(error)
     }
   }
 
   function handleFilter(search) {
-    const filteredTmpPeople = people
+    const filteredTmpPeople = persons
       .filter(p => p.name.toUpperCase().includes(search.toUpperCase()))
     if (search.length === 0)
-      setFilteredPeople(people)
+      setFilteredPersons(persons)
     else
-      setFilteredPeople(filteredTmpPeople)
+      setFilteredPersons(filteredTmpPeople)
   }
 
   return (
@@ -64,10 +75,10 @@ const App = () => {
       <Filter handleFilter={handleFilter} />
 
       <h2>Add a new</h2>
-      <PeopleForm addPerson={addPerson} />
+      <PersonForm addPerson={addPerson} />
 
       <h2>Numbers</h2>
-      <People people={filteredPeople} />
+      <Persons persons={filteredPersons} deletePerson={handleDeletePerson} />
     </div>
   );
 }

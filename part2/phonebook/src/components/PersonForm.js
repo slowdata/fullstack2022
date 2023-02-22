@@ -28,7 +28,10 @@ const PersonForm = ({ addPerson }) => {
             <div style={{ maxWidth: '28%', display: 'flex', justifyContent: 'space-between' }}>
                 name: <input name="name" value={newPerson.name} onChange={handleChange} />
             </div>
-            <div style={{ maxWidth: '28%', display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{
+                maxWidth: '28%', display: 'flex', justifyContent: 'space-between',
+                margin: '2px 0px 6px 0px'
+            }}>
                 number: <input name="number" value={newPerson.number} onChange={handleChange} />
             </div>
             <div>
