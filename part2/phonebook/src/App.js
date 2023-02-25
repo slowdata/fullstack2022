@@ -26,11 +26,18 @@ const App = () => {
 
 
   async function addPerson(p) {
-    const existingName = persons
+    const existingPerson = persons
       .find(person => person.name === p.name)
 
-    if (existingName !== undefined && existingName.name)
-      alert(`${p.name} is already added to phonebook`)
+    if (existingPerson !== undefined && existingPerson.name) {
+      if (confirm(`${p.name} is already added to phonebook, replace the older number with a new one?`)) {
+        const updatedPerson = await personsService.update(existingPerson.id, p)
+        console.log(updatedPerson);
+        setFilteredPersons([...filteredPersons.filter(per => per.id !== updatedPerson.id),
+          updatedPerson])
+        setPersons([...persons.filter(per => per.id !== updatedPerson.id), updatedPerson])
+      }
+    }
     else {
       const newPersonAdd = {
         id: persons.length + 1,
