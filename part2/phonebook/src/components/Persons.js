@@ -9,7 +9,7 @@ const Persons = ({ persons, deletePerson }) => {
         <ul style={{ padding: 0 }}>
             {
                 persons.map(person =>
-                (<li key={person.name} style={{
+                (<li key={person.id} style={{
                     padding: '1px 0px',
                     'display': 'flex', 'alignItems': 'center'
                 }}>
