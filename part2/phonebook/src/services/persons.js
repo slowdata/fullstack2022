@@ -7,7 +7,7 @@ export const getAll = async () => {
         const res = await axios.get(baseUrl)
         return res.data
     } catch (error) {
-        return error
+        throw new Error(error.message)
     }
 }
 
@@ -27,7 +27,7 @@ const update = async (id, person) => {
         const res = await axios.put(`${baseUrl}/${id}`, person)
         return res.data
     } catch (error) {
-        return error
+        throw new Error(`Information of ${person.name} has already been removed from server`)
     }
 }
 

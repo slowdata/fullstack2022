@@ -5,20 +5,24 @@ import personsService from './services/persons.js'
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification.js";
 
 const App = () => {
-  const [persons, setPersons] = useState([])
+  const [persons, setPersons] = useState(null)
   const [filteredPersons, setFilteredPersons] = useState([])
+  const [message, setMessage] = useState({
+    type: 'info',
+    text: null
+  })
 
   useEffect(() => {
     async function getAsyncPersons() {
-      const persons = await personsService.getAll()
-      if (persons.error)
-        console.log(persons.error.message);
-      else {
+      try {
+        const persons = await personsService.getAll()
         setPersons(persons)
         setFilteredPersons(persons)
-
+      } catch (error) {
+        console.error(error.message)
       }
     }
     getAsyncPersons()
@@ -31,11 +35,20 @@ const App = () => {
 
     if (existingPerson !== undefined && existingPerson.name) {
       if (confirm(`${p.name} is already added to phonebook, replace the older number with a new one?`)) {
-        const updatedPerson = await personsService.update(existingPerson.id, p)
-        console.log(updatedPerson);
-        setFilteredPersons([...filteredPersons.filter(per => per.id !== updatedPerson.id),
-          updatedPerson])
-        setPersons([...persons.filter(per => per.id !== updatedPerson.id), updatedPerson])
+        try {
+          const updatedPerson = await personsService.update(existingPerson.id, p)
+          setFilteredPersons([...filteredPersons.filter(per => per.id !== updatedPerson.id),
+            updatedPerson])
+          setPersons([...persons.filter(per => per.id !== updatedPerson.id), updatedPerson])
+        } catch (error) {
+          setMessage({ type: 'error', text: error.message })
+          setTimeout(() => {
+            setMessage({ ...message, text: null })
+          }, 5000);
+          setFilteredPersons([...filteredPersons.filter(per => per.id !== existingPerson.id)])
+          setPersons([...persons.filter(per => per.id !== existingPerson.id)])
+        }
+
       }
     }
     else {
@@ -48,8 +61,10 @@ const App = () => {
       if (person.error) {
         console.log(person.error.message)
       } else {
-        setPersons([person, ...persons])
-        setFilteredPersons([person, ...filteredPersons])
+        setMessage({ type: 'info', text: `Added ${person.name}` })
+        setTimeout(() => setMessage({ ...message, text: null }), 5000)
+        setPersons([...persons, person])
+        setFilteredPersons([...filteredPersons, person])
       }
     }
   }
@@ -79,6 +94,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification type={message.type} message={message.text} />
       <Filter handleFilter={handleFilter} />
 
       <h2>Add a new</h2>
